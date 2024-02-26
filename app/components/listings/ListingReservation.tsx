@@ -100,7 +100,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
     const now = addHours(new Date(), 1);
     const StartOfToday = startOfDay(selectedDate);
     const endOfToday = endOfDay(selectedDate);
-    const startHour = set(StartOfToday, { hours: 1 });
+    const startHour = set(StartOfToday, { hours: 10 });
     const endHour = set(endOfToday, { hours: 19, minutes: 45 });
     let hoursInDay = eachMinuteOfInterval(
       {
@@ -141,7 +141,7 @@ const ListingReservation: React.FC<ListingReservationProps> = ({
 
       <div>
         <div className="flex flex-col items-center gap-2 mt-4 p-4">
-          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6  text-md gap-2">
+          <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 text-md gap-2">
             {freeTimes.map((hour, hourIdx) => {
               const isDisabled = reserved.some((reservation) =>
                 isSameMinute(new Date(reservation.startTime), hour)

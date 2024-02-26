@@ -65,52 +65,59 @@ const ListingClient: React.FC<ListingClientProps> = ({
   const [totalPrice, setTotalPrice] = useState(listing.price);
   const [dateRange, setDateRange] = useState<Range>(initialDateRange);
   const [selectedFeatures, setSelectedFeatures] = useState<Feature[]>([]);
-  const [editFeatures, setEditFeatures] = useState(listing.features.map(feature => ({
-    service: feature.service,
-    price: feature.price
-  })))
+  const [editFeatures, setEditFeatures] = useState(
+    listing.features.map((feature) => ({
+      service: feature.service,
+      price: feature.price,
+    }))
+  );
   const removeEditfeature = async (index: number) => {
-    let f = []
+    let f = [];
     for (let i = 0; i < editFeatures.length; i++) {
       if (index !== i) {
-        console.log(i)
-        console.log(index)
+        console.log(i);
+        console.log(index);
         f.push({
           service: editFeatures[i].service,
-          price: editFeatures[i].price
-        })
+          price: editFeatures[i].price,
+        });
       }
     }
     await setEditFeatures(f);
-    console.log(editFeatures)
-  }
-  const addEditfeature = async(s:string, p:number) => {
-    let f = editFeatures
+    console.log(editFeatures);
+  };
+  const addEditfeature = async (s: string, p: number) => {
+    let f = editFeatures;
     await f.push({
       service: s,
-      price: p
-    })
-   await setEditFeatures(f);
-    console.log(editFeatures)
-  }
-  const  updateEditfeature = async(s:string, p:number,i:number) => {
-    let f = editFeatures
-    f[i].service=s
-    f[i].price=p
+      price: p,
+    });
     await setEditFeatures(f);
-    console.log(editFeatures)
-  }
+    console.log(editFeatures);
+  };
+  const updateEditfeature = async (s: string, p: number, i: number) => {
+    let f = editFeatures;
+    f[i].service = s;
+    f[i].price = p;
+    await setEditFeatures(f);
+    console.log(editFeatures);
+  };
 
-  const applyEdits=()=>{
-    axios.patch(`/api/listings/${listing.id}`,{
-      features:editFeatures
-    }).then((e)=>{
-      console.log(e.data)
-    }).catch((error)=>{toast.error("Something Went Wrong : "+ error)})
-    .finally(()=>{
-      window.location.reload()
-    })
-  }
+  const applyEdits = () => {
+    axios
+      .patch(`/api/listings/${listing.id}`, {
+        features: editFeatures,
+      })
+      .then((e) => {
+        console.log(e.data);
+      })
+      .catch((error) => {
+        toast.error("Something Went Wrong : " + error);
+      })
+      .finally(() => {
+        window.location.reload();
+      });
+  };
 
   const onCreateReservation = useCallback(() => {
     const total = selectedFeatures.reduce(
@@ -134,16 +141,18 @@ const ListingClient: React.FC<ListingClientProps> = ({
       .then(() => {
         const makePayment = async () => {
           // "use server"
+          console.log("first")
           try {
             const key = process.env.RAZORPAY_API_KEY;
             console.log(key);
             // Make API call to the serverless API
-            const data = await fetch("https://xpress-nine.vercel.app/api/razorpay", {
+            const data = await fetch("https://localhost:3000/api/razorpay", {
               method: "POST",
               body: JSON.stringify({
                 totalPriceAfterTaxid: parseInt(totalPriceAfterTax),
               }),
             });
+            console.log(data);
             const { order } = await data.json();
             console.log(order.id);
             const options = {
@@ -161,7 +170,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
               }) {
                 console.log("HERE" + response);
                 const data = await fetch(
-                  "https://xpress-nine.vercel.app/api/paymentverify",
+                  "https://localhost:3000/api/paymentverify",
                   {
                     method: "POST",
                     body: JSON.stringify({
@@ -182,6 +191,17 @@ const ListingClient: React.FC<ListingClientProps> = ({
                   setDateRange(initialDateRange);
                   router.refresh();
                   router.push("/upcoming");
+                  const res = await fetch(
+                    "https://localhost:3000/api/paymentregister",
+                    {
+                      method: "POST",
+                      body: JSON.stringify({
+                        listingId: listing.id!,
+                        price: totalPriceAfterTax,
+                      }),
+                    }
+                  );
+                  if (!res) throw new Error();
                 }
               },
               prefill: {
