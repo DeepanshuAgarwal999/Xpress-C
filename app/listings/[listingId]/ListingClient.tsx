@@ -37,7 +37,6 @@ const ListingClient: React.FC<ListingClientProps> = ({
   reserved = [],
 }) => {
   const loginModal = useLoginModal();
-  console.log(reserved, "reserved");
   const router = useRouter();
 
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -242,7 +241,6 @@ const ListingClient: React.FC<ListingClientProps> = ({
   //   listing?.id,
   // ]);
 
-
   const onCreateReservation = useCallback(() => {
     const total = selectedFeatures.reduce(
       (previous, current) => previous + current.price,
@@ -255,64 +253,59 @@ const ListingClient: React.FC<ListingClientProps> = ({
       startTime: selectedTime,
       listingId: listing?.id,
       features: selectedFeatures,
-    })
+    });
     if (!currentUser) {
       return loginModal.onOpen();
     }
     setIsLoading(true);
     try {
-      const somthingsm = async () => {
-        const res = await axios
-          .post("/api/reservations", {
-            totalPrice: parseInt(totalPriceAfterTax),
-            startDate: selectedDate,
-            startTime: selectedTime,
-            listingId: listing?.id,
-            features: selectedFeatures,
-          })
+      const paymentHistory = async () => {
+        const res = await axios.post("/api/reservations", {
+          totalPrice: parseInt(totalPriceAfterTax),
+          startDate: selectedDate,
+          startTime: selectedTime,
+          listingId: listing?.id,
+          features: selectedFeatures,
+        });
         console.log(res);
-      }
+      };
 
-      somthingsm().then(() => {
-
-        fetch(
-          "http://localhost:3000/api/paymentregister",
-          {
+      paymentHistory()
+        .then(() => {
+          fetch("http://localhost:3000/api/paymentregister", {
             method: "POST",
             body: JSON.stringify({
               listingId: listing?.id,
               price: totalPriceAfterTax,
+              title: listing?.title,
+              category: listing?.category,
             }),
-          }
-        ).then((res) => {
-          console.log(res);}).catch((error) => { console.log(error) }).finally(() => { console.log("finally") });
-
-
-
-
-
-
-      }).catch((error) => { console.log(error) }).finally(() => { console.log("finally") });
-
+          })
+            .then((res) => {
+              if (res) {
+                toast.success("Reserved Successfully");
+                window.location.href = "/upcoming";
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (e) {
+      console.log(e);
     }
-    catch (e) {
-      console.log(e)
-    }
-  },
-    [
-      totalPrice,
-      selectedTime,
-      selectedDate,
-      router,
-      currentUser,
-      loginModal,
-      listing?.id,
-    ]
-  )
-
-
-
-
+  }, [
+    totalPrice,
+    selectedTime,
+    selectedDate,
+    router,
+    currentUser,
+    loginModal,
+    listing?.id,
+  ]);
 
   const cate = useMemo(() => {
     return categories.find((item) => item.label === listing.category);

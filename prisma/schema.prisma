@@ -100,7 +100,8 @@ model PaymentHistory {
   listingId String   @db.ObjectId
   amount    Int
   createdAt DateTime @default(now())
-
-  user    User    @relation(fields: [userId], references: [id])
-  listing Listing @relation(fields: [listingId], references: [id])
+  title     String
+  category  String
+  user      User     @relation(fields: [userId], references: [id])
+  listing   Listing  @relation(fields: [listingId], references: [id])
 }

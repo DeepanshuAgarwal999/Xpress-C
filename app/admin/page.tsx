@@ -16,7 +16,9 @@ interface Props {
 
 const Admin = async ({ searchParams }: Props) => {
   const listings = await getListings(searchParams);
-  if (!listings)
+  console.log(listings);
+
+  if (listings.length === 0)
     return (
       <div className="h-[calc(100vh-300px)] text-xl text-center sm:text-3xl pt-36 font-semibold">
         NO Business Found
@@ -35,7 +37,7 @@ const Admin = async ({ searchParams }: Props) => {
                 A list of all the Buisness.
               </p>
             </div>
-            <Link href={'/'}>view payment history</Link>
+            <Link href={"/admin/paymenthistory"}>view payment history</Link>
           </div>
           <div className="mt-8">
             <div className="-mx-4 -my-2 sm:-mx-6 lg:-mx-8">
