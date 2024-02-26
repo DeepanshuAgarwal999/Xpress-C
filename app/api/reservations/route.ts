@@ -14,14 +14,17 @@ function generateOTP() {
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
+    console.log('err1')
+
     return NextResponse.error();
   }
 
   const body = await request.json();
-
+console.log(body)
   const { listingId, startDate, startTime, totalPrice, features } = body;
 
   if (!listingId || !startDate || !startTime || !totalPrice) {
+    console.log(listingId, startDate, startTime, totalPrice)
     return NextResponse.error();
   }
   const otp = generateOTP()
@@ -42,6 +45,8 @@ export async function POST(request: Request) {
       },
     },
   });
+
+  console.log('err3')
 
   return NextResponse.json(listingAndReservation);
 }
