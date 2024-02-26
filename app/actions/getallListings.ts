@@ -1,4 +1,4 @@
-import prisma from "@/app/libs/prismadb";
+import prisma from '@/app/libs/prismadb';
 
 export interface IListingsParams {
   userId?: string;
@@ -8,11 +8,12 @@ export interface IListingsParams {
   category?: string;
 }
 
-export default async function getListings(params: IListingsParams = {}) {
+export default async function getAllListings(params: IListingsParams) {
   try {
     const { category, userId, startDate } = params;
 
     let query: any = {};
+    // query.approved = true;
     if (userId) {
       query.userId = userId;
     }
@@ -40,11 +41,11 @@ export default async function getListings(params: IListingsParams = {}) {
     const listings = await prisma.listing?.findMany({
       where: query,
       orderBy: {
-        createdAt: "desc",
+        createdAt: 'desc',
       },
     });
 
-    const safeListings = listings.map((listing:any) => ({
+    const safeListings = listings.map((listing) => ({
       ...listing,
       createdAt: listing.createdAt.toISOString(),
     }));

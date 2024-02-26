@@ -1,5 +1,5 @@
 import Link from "next/link";
-import getListings, { IListingsParams } from "../actions/getListings";
+import getListings, { IListingsParams } from "../actions/getallListings";
 import ClientOnly from "../ClientOnly";
 import Approval from "./Approval";
 
