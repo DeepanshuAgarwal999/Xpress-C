@@ -1,7 +1,7 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
-import prisma from '@/app/libs/prismadb';
-import getCurrentUser from '@/app/actions/getCurrentUser';
+import prisma from "@/app/libs/prismadb";
+import getCurrentUser from "@/app/actions/getCurrentUser";
 function generateOTP() {
   const OTP_LENGTH = 6;
   const min = Math.pow(10, OTP_LENGTH - 1);
@@ -14,20 +14,16 @@ function generateOTP() {
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
   if (!currentUser) {
-    console.log('err1')
-
     return NextResponse.error();
   }
-
   const body = await request.json();
-console.log(body)
   const { listingId, startDate, startTime, totalPrice, features } = body;
 
   if (!listingId || !startDate || !startTime || !totalPrice) {
-    console.log(listingId, startDate, startTime, totalPrice)
+    console.log(listingId, startDate, startTime, totalPrice);
     return NextResponse.error();
   }
-  const otp = generateOTP()
+  const otp = generateOTP();
   const listingAndReservation = await prisma.listing.update({
     where: {
       id: listingId,
@@ -40,13 +36,11 @@ console.log(body)
           startTime,
           totalPrice,
           features,
-          otp
+          otp,
         },
       },
     },
   });
-
-  console.log('err3')
 
   return NextResponse.json(listingAndReservation);
 }
