@@ -381,6 +381,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
               features={selectedFeatures}
               price={listing.price}
               totalPrice={totalPrice}
+              time={listing.time!.toString()}
               onChangeDate={(value) => setDateRange(value)}
               dateRange={dateRange}
               onSubmit={onCreateReservation}
