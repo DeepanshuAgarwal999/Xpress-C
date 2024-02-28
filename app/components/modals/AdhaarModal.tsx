@@ -11,7 +11,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 const AdhaarModal = () => {
-  console.log("callled");
+  console.log("called");
   
   const [isLoading, setIsLoading] = useState(false);
   const aadhaarModal = useAadhaarModal();
